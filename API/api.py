@@ -1,6 +1,6 @@
 from pg import Pg
-from city import City
-from resource import Resource
+from API.cmd import Cmd
+from API.util import Util
 
 
 class API:
@@ -11,17 +11,14 @@ class API:
 	def __enter__(self):
 		# Connect to the DB
 		self.db = Pg(self.config)
+
+		# Load the child libraries
+		self.Cmd = Cmd(self.db)
+		self.Util = Util()
+
+		# Return yo'self
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
 		# Close the DB when done with this instance
 		self.db.close()
-
-	def upsert_city(self, city: City):
-		pass
-
-	def set_resource_amount(self, resource: Resource):
-		pass
-
-	def set_resource_production(self, resource: Resource):
-		pass
