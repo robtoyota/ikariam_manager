@@ -1,9 +1,13 @@
+from prompt_toolkit import print_formatted_text as print
+from prompt_toolkit import PromptSession
+
 from API.api import API
 
 
 class Shell:
-	def __init__(self, api: API):
+	def __init__(self, api: API, ps: PromptSession):
 		self.api = api
+		self.ps = ps
 
 	def run_command(self, inp: str) -> bool:
 		# Parse the input

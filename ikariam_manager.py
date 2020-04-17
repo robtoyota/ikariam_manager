@@ -13,9 +13,10 @@ class IkariamManager:
 
 		# Start up the API
 		with API(self.config) as self.API:
-			# Run the shell session
-			self.shell = Shell(self.API)
+			# Create the prompt session
 			self.ps = PromptSession('> ')
+			# Run the shell session
+			self.shell = Shell(self.API, self.ps)
 			self.inp = ""  # User input
 			exit_cmd = False
 
