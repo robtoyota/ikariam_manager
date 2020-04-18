@@ -16,7 +16,16 @@ class Config:
 
 	@staticmethod
 	def write_config(config_vals: dict, file_name: str = None) -> None:
+		# Try to get the config file path from the config dict
+		if not file_name:
+			try:
+				file_name = config_vals['CONFIG']['config_path']
+			except KeyError:
+				file_name = None
+
+		# Parse the file name (eg: set the default if it is blank)
 		file_name = Config.parse_config_path(file_name)
+		# Write the config to the file
 		Config.write_json(file_name, config_vals)
 
 	@staticmethod

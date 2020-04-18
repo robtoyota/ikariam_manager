@@ -4,6 +4,7 @@ from prompt_toolkit import print_formatted_text as print
 from config import Config
 from pg import Pg
 from Shell.shell import Shell
+from Shell.cmd import Cmd
 
 
 class IkariamManager:
@@ -32,5 +33,9 @@ if __name__ == '__main__':
 
 	# Load the config, to be passed on
 	config = Config.load_config(in_config_file)
+
+	# Install the DB if necessary
+	if not config['POSTGRES']['dbname']:
+		config = Cmd.install_database(config)
 
 	IkariamManager(config)
