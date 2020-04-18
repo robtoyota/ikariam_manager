@@ -31,7 +31,7 @@ class Pg:
 		self.connection.close()
 	
 	@staticmethod
-	def install_database(host: str, port: str, user: str, password: str) -> bool:
+	def create_database(host: str, port: str, user: str, password: str) -> bool:
 		# Connect to the DB
 		try:
 			with psycopg2.connect(host=host, port=port, user=user, password=password, dbname='postgres') as db:

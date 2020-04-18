@@ -20,7 +20,7 @@ class Cmd:
 			password = prompt('Postgres root password> ', is_password=True)
 
 			# Attempt to create the database and user
-			if Pg.install_database(host, port, user, password):
+			if Pg.create_database(host, port, user, password):
 				break  # If successful, exit the loop
 			else:
 				print("Please double check the information and try to connect again:")
