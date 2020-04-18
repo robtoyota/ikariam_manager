@@ -30,7 +30,7 @@ class Shell:
 		# TODO: Make this dynamic
 		if cmd == "install_db":
 			# Setup the database and get the new DB connection details
-			self.config = Cmd.install_database(self.config)
+			self.config = Cmd.create_database(self.config)
 		elif cmd == "add_city":
 			self.do_upsert_city(args)
 
