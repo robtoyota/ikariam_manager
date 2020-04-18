@@ -6,8 +6,10 @@ from config import Config
 from city import City
 from resource import Resource
 
+
 class Cmd:
 	@staticmethod
+	# Create the database and user ONLY (no other DDLs for tables or functions)
 	def create_database(config: dict) -> dict:
 		print("Enter your postgres server/root login (typically 'postgres'), to create the database.")
 		print("The root user credentials are not saved.")
@@ -37,3 +39,22 @@ class Cmd:
 
 		# Return the new config
 		return config
+
+	@staticmethod
+	# Install the DB DDLs for tables/functions/etc
+	def install_database(db: Pg) -> bool:
+		print("Installing tables...")
+		City.install_tables(db)
+		Resource.install_tables(db)
+
+		print("Installing base functions...")
+
+		print("Installing indexes...")
+		City.install_indexes(db)
+		Resource.install_indexes(db)
+
+		print("Installing functions...")
+		City.install_pg_functions(db)
+		Resource.install_pg_functions(db)
+
+		print("Installing views...")
