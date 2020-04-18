@@ -1,2 +1,4 @@
 class City:
-	pass
+	@staticmethod
+	def install_tables():
+		pass

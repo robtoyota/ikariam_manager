@@ -29,3 +29,25 @@ class Pg:
 
 	def close(self):
 		self.connection.close()
+	
+	@staticmethod
+	def create_database(host, port, user, password):
+		# Connect to the DB
+		with psycopg2.connect(host=host, port=port, user=user, password=password, dbname='postgres') as db:
+			with db.cursor() as cur:
+				# Create the user
+				cur.execute("""
+					create role ikariam_manager
+					with
+						encrypted password 'KhY/z@zaTN~k{&5;!g3+dzj5VmWKJ[.%'
+						login;
+				""")
+
+				# Create the DB
+				cur.execute("""
+					create database ikariam_manager
+					with
+						owner = ikariam_manager
+						encoding = 'UTF8'
+						connection limit = -1;
+				""")
