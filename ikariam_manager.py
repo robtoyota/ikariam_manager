@@ -1,10 +1,9 @@
 import sys
 from prompt_toolkit import print_formatted_text as print
-from prompt_toolkit import PromptSession
 
 from config import Config
 from API.api import API
-from shell import Shell
+from Shell.shell import Shell
 
 
 class IkariamManager:
@@ -13,18 +12,14 @@ class IkariamManager:
 
 		# Start up the API
 		with API(self.config) as self.API:
-			# Create the prompt session
-			self.ps = PromptSession('> ')
 			# Run the shell session
-			self.shell = Shell(self.API, self.ps)
-			self.inp = ""  # User input
+			self.shell = Shell(self.API)
 			exit_cmd = False
 
 			# Begin the user input loop
 			print("Welcome to Ikariam Manager. Type ? to list commands")
 			while not exit_cmd:
-				self.inp = self.ps.prompt()
-				exit_cmd = self.shell.run_command(self.inp)
+				exit_cmd = self.shell.run_command()
 
 
 if __name__ == '__main__':

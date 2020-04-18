@@ -5,19 +5,25 @@ from API.api import API
 
 
 class Shell:
-	def __init__(self, api: API, ps: PromptSession):
+	def __init__(self, api: API):
+		# Set the object for making API calls
 		self.api = api
-		self.ps = ps
 
-	def run_command(self, inp: str) -> bool:
-		# Parse the input
+		# Create the prompt session
+		self.ps = PromptSession('> ')
+
+	def run_command(self) -> bool:
+		# Prompt for the input command from the user
+		inp = self.ps.prompt()
+
+		# Validate the input
 		if len(inp.strip()) > 0:
+			# Split the input into a cmd and its args
 			cmd, args = self.parse_inp(inp)
 		else:
 			return False  # No command provided, but don't stop running the program
 
-		# Run the commands
-		cmd = inp[0]
+		# Run the command
 		# TODO: Make this dynamic
 		if cmd == "add_city":
 			return self.do_upsert_city(args)
