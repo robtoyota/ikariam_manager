@@ -5,7 +5,6 @@ import psycopg2.extras
 class Pg:
 	# connect to postgres
 	def __init__(self, config: dict):
-		# TODO: Change this to pooling: http://initd.org/psycopg/docs/pool.html
 		self.connection = psycopg2.connect(
 			host=config['POSTGRES']['host'],
 			port=config['POSTGRES']['port'],
@@ -17,9 +16,9 @@ class Pg:
 
 		# Enable autocommit by default.
 		# Some thoughts: Both the database design and the Python code is crafted to not require rollbacks.  Whenever
-		# 	multiple statements in a transaction are require, they should be occurring within a database proc/function.
+		# 	multiple statements in a transaction are require, they should be occurring within a database proc.
 		# 	This also helps to enforce the practice of keeping the number of DB calls to a minimum by placing multiple
-		# 	queries only within DB functions.  Any garbage data should be cleaned up by a cleanup function in the DB.
+		# 	queries only within DB procs or functions.
 		self.connection.autocommit = True
 
 	def __enter__(self):

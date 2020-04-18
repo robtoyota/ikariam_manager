@@ -1,13 +1,14 @@
 from prompt_toolkit import print_formatted_text as print
 from prompt_toolkit import PromptSession
 
-from API.api import API
+from pg import Pg
 
 
 class Shell:
-	def __init__(self, api: API):
-		# Set the object for making API calls
-		self.api = api
+	def __init__(self, config: dict, db: Pg):
+		# Save the passed variables
+		self.config = config
+		self.db = db
 
 		# Create the prompt session
 		self.ps = PromptSession('> ')
@@ -24,11 +25,15 @@ class Shell:
 			return False  # No command provided, but don't stop running the program
 
 		# Run the command
+		cmd_response = None
 		# TODO: Make this dynamic
 		if cmd == "add_city":
-			return self.do_upsert_city(args)
+			cmd_response = self.do_upsert_city(args)
 
-		return False  # Don't stop running the program
+		if not cmd_response:
+			return False  # Don't stop running the program
+		else:
+			return True  # Exit the program
 
 	def parse_inp(self, inp: str) -> list:
 		inp = inp.strip().split(maxsplit=1)  # Split the cmd and the arg
@@ -36,8 +41,6 @@ class Shell:
 			inp.append('')  # Add a blank arg
 		return inp
 
-	def do_upsert_city(self, args: str) -> bool:
+	def do_upsert_city(self, args: str) -> None:
 		# Parse the coordinates and (optionally) the name
-
-		self.api.Cmd.upsert_city(args)
-		return False  # Do not exit the program
+		pass

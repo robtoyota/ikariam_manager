@@ -2,7 +2,7 @@ import sys
 from prompt_toolkit import print_formatted_text as print
 
 from config import Config
-from API.api import API
+from pg import Pg
 from Shell.shell import Shell
 
 
@@ -11,9 +11,9 @@ class IkariamManager:
 		self.config = config_dict
 
 		# Start up the API
-		with API(self.config) as self.API:
+		with Pg(self.config) as self.db:
 			# Run the shell session
-			self.shell = Shell(self.API)
+			self.shell = Shell(self.config, self.db)
 			exit_cmd = False
 
 			# Begin the user input loop

@@ -1,1 +1,2 @@
-class Cmd
+class Cmd:
+	pass
