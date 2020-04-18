@@ -8,7 +8,7 @@ from resource import Resource
 
 class Cmd:
 	@staticmethod
-	def install_database(config: dict) -> bool:
+	def create_database(config: dict) -> dict:
 		print("Enter your postgres server/root login (typically 'postgres'), to create the database.")
 		print("The root user credentials are not saved.")
 

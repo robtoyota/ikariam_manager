@@ -36,6 +36,6 @@ if __name__ == '__main__':
 
 	# Install the DB if necessary
 	if not config['POSTGRES']['dbname']:
-		config = Cmd.install_database(config)
+		config = Cmd.create_database(config)
 
 	IkariamManager(config)
