@@ -28,9 +28,10 @@ class Shell:
 		# Run the command
 		cmd_response = None  # Default value
 		# TODO: Make this dynamic
-		if cmd == "install_db":
-			# Setup the database and get the new DB connection details
-			self.config = Cmd.create_database(self.config)
+		if cmd == "exit":
+			cmd_response = False
+		elif cmd == "install":
+			Cmd.install_database(self.db)
 		elif cmd == "add_city":
 			self.do_upsert_city(args)
 
