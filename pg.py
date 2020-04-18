@@ -31,23 +31,29 @@ class Pg:
 		self.connection.close()
 	
 	@staticmethod
-	def create_database(host, port, user, password):
+	def install_database(host: str, port: str, user: str, password: str) -> bool:
 		# Connect to the DB
-		with psycopg2.connect(host=host, port=port, user=user, password=password, dbname='postgres') as db:
-			with db.cursor() as cur:
-				# Create the user
-				cur.execute("""
-					create role ikariam_manager
-					with
-						encrypted password 'KhY/z@zaTN~k{&5;!g3+dzj5VmWKJ[.%'
-						login;
-				""")
+		try:
+			with psycopg2.connect(host=host, port=port, user=user, password=password, dbname='postgres') as db:
+				db.autocommit = True
+				with db.cursor() as cur:
+					# Create the user
+					cur.execute("""
+						create role ikariam_manager
+						with
+							encrypted password 'KhY/z@zaTN~k{&5;!g3+dzj5VmWKJ[.%'
+							login;
+					""")
 
-				# Create the DB
-				cur.execute("""
-					create database ikariam_manager
-					with
-						owner = ikariam_manager
-						encoding = 'UTF8'
-						connection limit = -1;
-				""")
+					# Create the DB
+					cur.execute("""
+						create database ikariam_manager
+						with
+							owner = ikariam_manager
+							encoding = 'UTF8'
+							connection limit = -1;
+					""")
+
+					return True
+		except psycopg2.OperationalError:  # Could not connect
+			return False

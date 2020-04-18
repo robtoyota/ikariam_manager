@@ -2,6 +2,7 @@ from prompt_toolkit import print_formatted_text as print
 from prompt_toolkit import PromptSession
 
 from pg import Pg
+from Shell.cmd import Cmd
 
 
 class Shell:
@@ -25,10 +26,13 @@ class Shell:
 			return False  # No command provided, but don't stop running the program
 
 		# Run the command
-		cmd_response = None
+		cmd_response = None  # Default value
 		# TODO: Make this dynamic
-		if cmd == "add_city":
-			cmd_response = self.do_upsert_city(args)
+		if cmd == "install_db":
+			# Setup the database and get the new DB connection details
+			self.config = Cmd.install_database(self.config)
+		elif cmd == "add_city":
+			self.do_upsert_city(args)
 
 		if not cmd_response:
 			return False  # Don't stop running the program
