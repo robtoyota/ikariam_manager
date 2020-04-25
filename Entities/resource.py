@@ -1,9 +1,12 @@
+from pg import Pg
+
+
 class Resource:
 	def __init__(self, name, amount=None, production=None, usage=None):
 		self.name = name
 
 	@staticmethod
-	def install_tables(db) -> None:
+	def install_tables(db: Pg) -> None:
 		with db.cursor() as cur:
 			# Base resource table
 			cur.execute("""
@@ -97,7 +100,7 @@ class Resource:
 
 
 	@staticmethod
-	def install_indexes(db) -> None:
+	def install_indexes(db: Pg) -> None:
 		with db.cursor() as cur:
 			# Base resource table
 			cur.execute("""
@@ -106,6 +109,6 @@ class Resource:
 			""")
 
 	@staticmethod
-	def install_pg_functions(db) -> None:
+	def install_pg_functions(db: Pg) -> None:
 		with db.cursor() as cur:
 			pass  # cur.execute()
