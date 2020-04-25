@@ -14,6 +14,10 @@ class Shell:
 		# Create the prompt session
 		self.ps = PromptSession('> ')
 
+		# Set the session variables
+		self.user_id = 1  # ID from the user table
+		self.city_id = 0  # ID from the city table
+
 	def run_command(self) -> bool:
 		# Prompt for the input command from the user
 		inp = self.ps.prompt()
@@ -21,7 +25,7 @@ class Shell:
 		# Validate the input
 		if len(inp.strip()) > 0:
 			# Split the input into a cmd and its args
-			cmd, args = self.parse_inp(inp)
+			cmd, args = self.split_cmd_arg(inp)
 		else:
 			return False  # No command provided, but don't stop running the program
 
@@ -31,21 +35,67 @@ class Shell:
 		if cmd == "exit":
 			cmd_response = False
 		elif cmd == "install":
-			Cmd.install_database(self.db)
-		elif cmd == "add_city":
-			self.do_upsert_city(args)
+			self.do_install_database()
+		elif cmd == "add":
+			self.do_add(args)
+		elif cmd == "set":
+			self.do_set(args)
 
 		if not cmd_response:
 			return False  # Don't stop running the program
 		else:
 			return True  # Exit the program
 
-	def parse_inp(self, inp: str) -> list:
+	def split_cmd_arg(self, inp: str) -> list:
+		# Accepts a string and separates the first word from the rest of the text
 		inp = inp.strip().split(maxsplit=1)  # Split the cmd and the arg
 		if len(inp) == 1:  # Was there only a cmd?
 			inp.append('')  # Add a blank arg
 		return inp
 
-	def do_upsert_city(self, args: str) -> None:
-		# Parse the coordinates and (optionally) the name
-		pass
+	def split_args(self, args: str) -> list:
+		# Accepts a list of args, and returns a list of its items
+		arg_split = args.strip().split()
+		return arg_split
+
+	def error(self, msg: str) -> None:
+		print(f"==Error: {msg}")
+
+	def warning(self, msg: str) -> None:
+		print(f"==Warning: {msg}")
+
+	def success(self, msg: str) -> None:
+		print(f"{msg}")
+
+	def message(self, msg: str) -> None:
+		print(f"{msg}")
+
+	def do_install_database(self) -> None:
+		# Install the database tables/functions/etc
+		Cmd.install_database(self.db)
+
+	def do_add(self, inp: str) -> None:
+		# Determine what needs to be added:
+		cmd, inp_args = self.split_cmd_arg(inp)
+
+		if cmd == "user":
+			# Get the username and server from the input
+			args = self.split_args(inp_args)
+			if len(args) == 2:  # Make sure both values are set:
+				response = add_user(username=args[0], server=args[1])
+				if response > 0:
+					self.user_id = response
+					success(f"Current user has been set to {args[1]}: {args[0]}")
+			else:
+				error("Server and Username are required")
+		if cmd == "city":
+			pass
+
+	def do_set(self, inp: str) -> None:
+		# Determine what needs to be set:
+		cmd, args = self.split_cmd_arg(inp)
+
+		if cmd == "resource":
+			pass
+		if cmd == "city":
+			pass
