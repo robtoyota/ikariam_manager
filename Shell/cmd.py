@@ -3,8 +3,8 @@ from prompt_toolkit import PromptSession, prompt
 
 from pg import Pg
 from config import Config
-from city import City
-from resource import Resource
+from Entities.city import City
+from Entities.resource import Resource
 
 
 class Cmd:
