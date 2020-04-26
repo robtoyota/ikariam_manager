@@ -56,6 +56,11 @@ class Cmd:
 		City.install_indexes(db)
 		Resource.install_indexes(db)
 
+		print("Installing views...")
+		User.install_views(db)
+		City.install_views(db)
+		Resource.install_views(db)
+
 		print("Installing functions...")
 		User.install_pg_functions(db)
 		City.install_pg_functions(db)

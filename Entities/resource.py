@@ -156,6 +156,45 @@ class Resource:
 			""")
 
 	@staticmethod
+	def install_pg_views(db: Pg) -> None:
+		with db.cursor() as cur:
+			cur.execute("""
+				create view if not exists resource_detail as
+				select
+					r.id as resource_id, c.user_id, usr.server, usr.username, r.city_id, c.city_name, r.resource_type
+					, amt.amount
+					, mx.amount as maximum
+					, prd.amount as production
+					, tamt.amount as target_amount
+					, tmx.amount as target_maximum
+					, tmn.amount as target_minimum
+					, usg.amount as usage
+				from
+					resource r
+					join city c
+						on (c.id=r.city_id)
+					join username usr
+						on (usr.id=c.user_id)
+					left join resource_amount amt
+						on (amt.resource_id=r.id)
+					left join resource_maximum mx
+						on (mx.resource_id=r.id)
+					left join resource_production prd
+						on (prd.resource_id=r.id)
+					left join resource_target_amount tamt
+						on (tamt.resource_id=r.id)
+					left join resource_target_maximum tmx
+						on (tmx.resource_id=r.id)
+					left join resource_target_minimum tmn
+						on (tmn.resource_id=r.id)
+					left join resource_usage usg
+						on (usg.resource_id=r.id)
+
+				go
+				select * from username
+			""")
+
+	@staticmethod
 	def install_pg_functions(db: Pg) -> None:
 		with db.cursor() as cur:
 			pass  # cur.execute()
