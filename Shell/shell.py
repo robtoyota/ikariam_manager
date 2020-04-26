@@ -114,7 +114,27 @@ class Shell:
 		# Determine what needs to be set:
 		cmd, args = self.split_cmd_arg(inp)
 
+		# Set the resource amounts
 		if cmd == "resource":
-			pass
+			Util.message("Paste your resources for each city, or press [Enter] to skip")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the list of resources as input
+				resources = self.ps.prompt(f"{city['city_name']} resources> ")
+
+				# Parse the input into each resource
+				amounts = Util.parse_resource_amount_listing(resources)
+
+				# Make sure all resources are accounted for
+				if len(amounts) != 5:
+					Util.error("Missing resource values. Skipping to the next city.")
+					continue
+
+				# Loop through each resource type, and set each value
+				for r in ['B', 'W', 'M', 'C', 'S']:
+					Resource.set_amount(self.db, city['id'], r, amounts[r])
+
+			Util.success("All resources have been updated.")
+
 		elif cmd == "city":
 			pass

@@ -2,6 +2,20 @@ from pg import Pg
 
 
 class City:
+	def __init__(self, properties: dict):
+		self.city_id = properties.get('city_id', 0)
+		self.user_id = properties.get('user_id', 0)
+		self.x = properties.get('x', 0)
+		self.y = properties.get('y', 0)
+		self.city_name = properties.get('city_name', "")
+		self.list_order = properties.get('list_order', 0)
+		self.resource_type = properties.get('resource_type', "")
+		self.city_level = properties.get('city_level', 0)
+		self.population = properties.get('population', 0)
+		self.max_population = properties.get('max_population', 0)
+		self.satisfaction = properties.get('satisfaction', 0)
+		self.action_points_available = properties.get('action_points_available', 0)
+
 	@staticmethod
 	def add_city(db: Pg, x: int, y: int, city_name: str, user_id: int) -> int:
 		# Insert the new user
@@ -18,18 +32,27 @@ class City:
 				{'x':x, 'y':y, 'city_name':city_name, 'user_id':user_id}
 			)
 
-			# Get the ID of the user
+			# If city was created:
 			if cur.rowcount > 0:
 				row = cur.fetchone()
+
+				# Insert each of the resource types
+				for r in ['B', 'W', 'M', 'C', 'S']:
+					cur.execute(
+						"insert into resource (city_id, resource_type) values (%s, %s) on conflict do nothing", 
+						(row['id'], r)
+					)
+				# Return the ID of the new city row
 				return row['id']
-			else:  # If no ID was returned
-				# Does the user already exist? Try get the ID:
+			# If no ID was returned
+			else:
+				# Does the city already exist? Try get the ID:
 				cur.execute("select id from username where x=%s and y=%s and city_name=%s and user_id=%s", (x, y, city_name, user_id))
 				row = cur.fetchone()
-				if row['id'] > 0:
+				if row['id'] > 0:  # Return the ID of the existing row
 					return row['id']
 				else:
-					return -1
+					return -1  # Error
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:
@@ -43,6 +66,7 @@ class City:
 					y int not null,
 					city_name text null,
 					list_order int null,
+					resource_type varchar(1),  -- W/M/C/S
 					city_level int null,
 					population int null,
 					max_population int null,
@@ -61,7 +85,7 @@ class City:
 				create index if not exists city_x on city(x);
 				create index if not exists city_y on city(y);
 				create index if not exists city_city_name on city(city_name);
-				create index if not exists city_list_order on city(list_order);
+				create index if not exists city_user_id on city(user_id);
 			""")
 
 	@staticmethod
