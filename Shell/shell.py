@@ -76,7 +76,7 @@ class Shell:
 			# Get the username and server from the input
 			args = self.split_args(inp_args)
 			if len(args) == 2:  # Make sure both values are set:
-				response = User.add_user(db=self.db, server=args[1], username=args[0])
+				response = User.add_user(db=self.db, server=args[0], username=args[1])
 				if response > 0:
 					self.user_id = response
 					Util.success(f"Current user has been set to {args[0]}: {args[1]}")
