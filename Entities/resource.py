@@ -4,7 +4,7 @@ from pg import Pg
 class Resource:
 	def __init__(self, properties: dict):
 		self.city_id = properties.get('city_id', 0)
-		self.resource_type = properties.get('resource_type', "')
+		self.resource_type = properties.get('resource_type', "")
 		self.amount = properties.get('amount', 0)
 		self.production = properties.get('production', 0)
 		self.usage = properties.get('usage', 0)
