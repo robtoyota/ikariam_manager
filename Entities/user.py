@@ -2,6 +2,11 @@ from pg import Pg
 
 
 class User:
+	def __init__(self):
+		self.user_id = 0
+		self.username = ""
+		self.server = ""
+
 	@staticmethod
 	def list_cities(db: Pg, user_id: int) -> list:
 		# Query the list of cities

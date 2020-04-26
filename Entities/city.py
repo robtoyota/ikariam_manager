@@ -2,6 +2,20 @@ from pg import Pg
 
 
 class City:
+	def __init__(self):
+		self.city_id = 0
+		self.user_id = 0
+		self.x = 0
+		self.y = 0
+		self.city_name = ""
+		self.list_order = 0
+		self.resource_type = ""
+		self.city_level = 0
+		self.population = 0
+		self.max_population = 0
+		self.satisfaction = 0
+		self.action_points_available = 0
+
 	@staticmethod
 	def add_city(db: Pg, x: int, y: int, city_name: str, user_id: int) -> int:
 		# Insert the new user
