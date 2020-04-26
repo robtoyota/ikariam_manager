@@ -159,7 +159,7 @@ class Resource:
 	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
 			cur.execute("""
-				create view if not exists resource_detail as
+				create or replace view resource_detail as
 				select
 					r.id as resource_id, c.user_id, usr.server, usr.username, r.city_id, c.city_name, r.resource_type
 					, amt.amount
@@ -189,9 +189,6 @@ class Resource:
 						on (tmn.resource_id=r.id)
 					left join resource_usage usg
 						on (usg.resource_id=r.id)
-
-				go
-				select * from username
 			""")
 
 	@staticmethod
