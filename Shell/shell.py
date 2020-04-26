@@ -36,7 +36,7 @@ class Shell:
 		cmd_response = None  # Default value
 		# TODO: Make this dynamic
 		if cmd == "exit":
-			cmd_response = False
+			cmd_response = True
 		elif cmd == "install":
 			self.do_install_database()
 		elif cmd == "add":
@@ -81,6 +81,7 @@ class Shell:
 		# Determine what needs to be added:
 		cmd, inp_args = self.split_cmd_arg(inp)
 
+		# Add users
 		if cmd == "user":
 			# add user [server] [username]
 			# Get the username and server from the input
@@ -92,6 +93,7 @@ class Shell:
 					self.success(f"Current user has been set to {args[0]}: {args[1]}")
 			else:
 				self.error("Server and Username are required")
+		# Add cities
 		if cmd == "city":
 			pass
 

@@ -20,7 +20,8 @@ class City:
 					satisfaction int,
 					action_points_available int,
 					inserted_on timestamp,
-					updated_on timestamp
+					updated_on timestamp,
+					unique(user_id, x, y, city_name)
 				);
 			""")
 
