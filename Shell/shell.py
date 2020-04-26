@@ -1,6 +1,7 @@
-from prompt_toolkit import print_formatted_text as print
+from prompt_toolkit import print_formatted_text as print, HTML
 from prompt_toolkit import PromptSession
 
+from Shell.util import Util
 from pg import Pg
 from Shell.cmd import Cmd
 from Entities.user import User
@@ -15,7 +16,7 @@ class Shell:
 		self.db = db
 
 		# Create the prompt session
-		self.ps = PromptSession('> ')
+		self.ps = PromptSession()
 
 		# Set the session variables
 		self.user_id = 1  # ID from the user table
@@ -23,7 +24,7 @@ class Shell:
 
 	def run_command(self) -> bool:
 		# Prompt for the input command from the user
-		inp = self.ps.prompt()
+		inp = self.ps.prompt('> ')
 
 		# Validate the input
 		if len(inp.strip()) > 0:
@@ -36,7 +37,7 @@ class Shell:
 		cmd_response = None  # Default value
 		# TODO: Make this dynamic
 		if cmd == "exit":
-			cmd_response = False
+			cmd_response = True
 		elif cmd == "install":
 			self.do_install_database()
 		elif cmd == "add":
@@ -61,18 +62,6 @@ class Shell:
 		arg_split = args.strip().split()
 		return arg_split
 
-	def error(self, msg: str) -> None:
-		print(f"==Error: {msg}")
-
-	def warning(self, msg: str) -> None:
-		print(f"==Warning: {msg}")
-
-	def success(self, msg: str) -> None:
-		print(f"{msg}")
-
-	def message(self, msg: str) -> None:
-		print(f"{msg}")
-
 	def do_install_database(self) -> None:
 		# Install the database tables/functions/etc
 		Cmd.install_database(self.db)
@@ -81,6 +70,7 @@ class Shell:
 		# Determine what needs to be added:
 		cmd, inp_args = self.split_cmd_arg(inp)
 
+		# Add users
 		if cmd == "user":
 			# add user [server] [username]
 			# Get the username and server from the input
@@ -89,11 +79,36 @@ class Shell:
 				response = User.add_user(db=self.db, server=args[1], username=args[0])
 				if response > 0:
 					self.user_id = response
-					self.success(f"Current user has been set to {args[0]}: {args[1]}")
+					Util.success(f"Current user has been set to {args[0]}: {args[1]}")
 			else:
-				self.error("Server and Username are required")
-		if cmd == "city":
-			pass
+				Util.error("Server and Username are required")
+
+		# Add cities
+		elif cmd == "city":
+			Util.message(HTML("Paste the name in the format <b>[xx:yy] CityName</b>. Enter a blank line to stop entering cities."))
+			# Request each city, one by one
+			while True:
+				city_inp = self.ps.prompt('Add City> ')  # Get the input
+				city_inp = city_inp.strip()
+
+				# Check if the user entered a blank input, to break the loop
+				if not city_inp:
+					break
+
+				# Parse the input for the city to extract the coordinates and name
+				city = Util.parse_city_square_brackets(city_inp)
+				if "error" in city:
+					Util.error(city['error'])
+					continue
+
+				# Insert the city
+				city_id = City.add_city(db=self.db, x=city['x'], y=city['y'], city_name=city['city_name'], user_id=self.user_id)
+				if city_id > 0:
+					Util.success("City has been added.")
+				else:
+					Util.error("There was an error adding the city")
+					continue
+
 
 	def do_set(self, inp: str) -> None:
 		# Determine what needs to be set:
@@ -101,5 +116,5 @@ class Shell:
 
 		if cmd == "resource":
 			pass
-		if cmd == "city":
+		elif cmd == "city":
 			pass
