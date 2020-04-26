@@ -3,6 +3,7 @@ from prompt_toolkit import PromptSession, prompt
 
 from pg import Pg
 from config import Config
+from Entities.user import User
 from Entities.city import City
 from Entities.resource import Resource
 
@@ -44,16 +45,19 @@ class Cmd:
 	# Install the DB DDLs for tables/functions/etc
 	def install_database(db: Pg) -> bool:
 		print("Installing tables...")
+		User.install_tables(db)
 		City.install_tables(db)
 		Resource.install_tables(db)
 
 		print("Installing base functions...")
 
 		print("Installing indexes...")
+		User.install_indexes(db)
 		City.install_indexes(db)
 		Resource.install_indexes(db)
 
 		print("Installing functions...")
+		User.install_pg_functions(db)
 		City.install_pg_functions(db)
 		Resource.install_pg_functions(db)
 

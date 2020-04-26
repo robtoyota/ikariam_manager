@@ -3,6 +3,9 @@ from prompt_toolkit import PromptSession
 
 from pg import Pg
 from Shell.cmd import Cmd
+from Entities.user import User
+from Entities.city import City
+from Entities.resource import Resource
 
 
 class Shell:
@@ -79,15 +82,16 @@ class Shell:
 		cmd, inp_args = self.split_cmd_arg(inp)
 
 		if cmd == "user":
+			# add user [server] [username]
 			# Get the username and server from the input
 			args = self.split_args(inp_args)
 			if len(args) == 2:  # Make sure both values are set:
-				response = add_user(username=args[0], server=args[1])
+				response = User.add_user(db=self.db, server=args[1], username=args[0])
 				if response > 0:
 					self.user_id = response
-					success(f"Current user has been set to {args[1]}: {args[0]}")
+					self.success(f"Current user has been set to {args[0]}: {args[1]}")
 			else:
-				error("Server and Username are required")
+				self.error("Server and Username are required")
 		if cmd == "city":
 			pass
 
