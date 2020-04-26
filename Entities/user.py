@@ -72,6 +72,11 @@ class User:
 			pass
 
 	@staticmethod
+	def isntall_pg_views(db: Pg) -> None:
+		with db.cursor() as cur:
+			pass  # cur.execute()
+
+	@staticmethod
 	def install_pg_functions(db: Pg) -> None:
 		with db.cursor() as cur:
 			pass  # cur.execute()
