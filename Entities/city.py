@@ -3,12 +3,12 @@ from pg import Pg
 
 class City:
 	@staticmethod
-	def add_city(db: Pg, x: int, y: int, name: str, user_id: int) -> int:
+	def add_city(db: Pg, x: int, y: int, city_name: str, user_id: int) -> int:
 		# Insert the new user
 		with db.cursor() as cur:
 			cur.execute(
-				"insert into username (username, server) values (%s, %s) on conflict do nothing returning id",
-				(username, server)
+				"insert into city (x, y, city_name, user_id) values (%s, %s, %s, %s) on conflict do nothing returning id",
+				(x, y, city_name, user_id)
 			)
 
 			# Get the ID of the user
@@ -17,7 +17,7 @@ class City:
 				return row['id']
 			else:  # If no ID was returned
 				# Does the user already exist? Try get the ID:
-				cur.execute("select id from username where username=%s and server=%s", (username, server))
+				cur.execute("select id from username where x=%s and y=%s and city_name=%s and user_id=%s", (x, y, city_name, user_id))
 				row = cur.fetchone()
 				if row['id'] > 0:
 					return row['id']
