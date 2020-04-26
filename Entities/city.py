@@ -89,7 +89,7 @@ class City:
 			""")
 
 	@staticmethod
-	def isntall_views(db: Pg) -> None:
+	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
 			pass  # cur.execute()
 
