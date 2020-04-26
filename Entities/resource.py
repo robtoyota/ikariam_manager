@@ -156,7 +156,7 @@ class Resource:
 			""")
 
 	@staticmethod
-	def install_pg_views(db: Pg) -> None:
+	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
 			cur.execute("""
 				create view if not exists resource_detail as
