@@ -8,7 +8,7 @@ class User:
 		self.server = properties.get('server', "")
 
 	@staticmethod
-	def list_cities(db: Pg, user_id: int) -> list:
+	def city_list(db: Pg, user_id: int) -> list:
 		# Query the list of cities
 		with db.cursor() as cur:
 			cur.execute(
@@ -17,7 +17,17 @@ class User:
 			)
 
 			# Build the list of cities
+			cities = []
+			for row in cur:
+				cities.append({
+					'id': row['id'],
+					'x': row['x'],
+					'y': row['y'],
+					'city_name': row['city_name'],
+					'resource_type': row['resource_type'],
+				})
 
+			return cities
 
 	@staticmethod
 	def add_user(db: Pg, username: str, server: str) -> int:
