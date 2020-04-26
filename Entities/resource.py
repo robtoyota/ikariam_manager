@@ -14,9 +14,36 @@ class Resource:
 		self.target_amount = properties.get('target_amount', 0)
 
 	@staticmethod
-	def set_amount(db: Pg, resource_id: int, amount: int) -> bool:
+	def set_amount(db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
+		# Validate the input
+		if not (city_id > 0 and resource_type in ['B', 'W', 'M', 'C', 'S'] and amount > 0):
+			return False
+
+		# Upsert the change
 		with db.cursor() as cur:
-			pass
+			cur.execute(
+				"""
+					-- Get the ID of the resource
+					with r as (
+						select id
+						from resource
+						where city_id=%(city_id)s and resource_type=%(resource_type)s
+					)
+					-- Insert the value row if it does not already exist
+					insert into resource_amount
+						(resource_id, amount)
+					select id, %(amount)s from r
+					-- If it exists already, then update the value
+					on conflict (resource_id)
+					do update 
+					set amount = excluded.amount
+				""",
+				{
+					'city_id': city_id,
+					'resource_type': resource_type,
+					'amount': amount,
+				}
+			)
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:

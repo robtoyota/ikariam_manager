@@ -50,6 +50,8 @@ class Util:
 		for amount in resources.split("\n"):
 			# Sanitize the resource value
 			amount = amount.strip().replace(',', '')
+			if not amount:  # Skip blank amounts
+				continue
 
 			# Handle cases of more than 1 million resources
 			multiplier = 1  # Default to not multiply
