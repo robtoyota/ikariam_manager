@@ -24,7 +24,6 @@ class User:
 				else:
 					return -1
 
-
 	@staticmethod
 	def install_tables(db: Pg) -> None:
 		with db.cursor() as cur:
