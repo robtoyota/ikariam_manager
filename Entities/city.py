@@ -37,7 +37,7 @@ class City:
 				row = cur.fetchone()
 
 				# Insert each of the resource types
-				for r in ['L', 'M', 'W', 'C', 'S']:
+				for r in ['B', 'M', 'W', 'C', 'S']:
 					cur.execute(
 						"insert into resource (city_id, resource_type) values (%s, %s) on conflict do nothing", 
 						(row['id'], r)
