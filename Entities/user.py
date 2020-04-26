@@ -3,6 +3,17 @@ from pg import Pg
 
 class User:
 	@staticmethod
+	def list_cities(db: Pg, user_id: int) -> list:
+		# Query the list of cities
+		with db.cursor() as cur:
+			cur.execute(
+				"select id, x, y, city_name, resource_type from city where user_id=%s order by list_order",
+				(user_id, )
+			)
+
+			# Build the list of cities
+
+	@staticmethod
 	def add_user(db: Pg, username: str, server: str) -> int:
 		# Insert the new user
 		with db.cursor() as cur:
