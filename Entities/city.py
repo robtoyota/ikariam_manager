@@ -43,6 +43,7 @@ class City:
 					y int not null,
 					city_name text null,
 					list_order int null,
+					resource_type varchar(1),  -- M/W/C/S
 					city_level int null,
 					population int null,
 					max_population int null,
@@ -61,7 +62,7 @@ class City:
 				create index if not exists city_x on city(x);
 				create index if not exists city_y on city(y);
 				create index if not exists city_city_name on city(city_name);
-				create index if not exists city_list_order on city(list_order);
+				create index if not exists city_user_id on city(user_id);
 			""")
 
 	@staticmethod
