@@ -1,4 +1,4 @@
-from prompt_toolkit import print_formatted_text as print
+from prompt_toolkit import print_formatted_text as print, HTML
 from prompt_toolkit import PromptSession
 
 from Shell.util import Util
@@ -16,7 +16,7 @@ class Shell:
 		self.db = db
 
 		# Create the prompt session
-		self.ps = PromptSession('> ')
+		self.ps = PromptSession()
 
 		# Set the session variables
 		self.user_id = 1  # ID from the user table
@@ -24,7 +24,7 @@ class Shell:
 
 	def run_command(self) -> bool:
 		# Prompt for the input command from the user
-		inp = self.ps.prompt()
+		inp = self.ps.prompt('> ')
 
 		# Validate the input
 		if len(inp.strip()) > 0:
@@ -82,9 +82,33 @@ class Shell:
 					Util.success(f"Current user has been set to {args[0]}: {args[1]}")
 			else:
 				Util.error("Server and Username are required")
+
 		# Add cities
-		if cmd == "city":
-			pass
+		elif cmd == "city":
+			Util.message(HTML("Paste the name in the format <b>[xx:yy] CityName</b>. Enter a blank line to stop entering cities."))
+			# Request each city, one by one
+			while True:
+				city_inp = self.ps.prompt('Add City> ')  # Get the input
+				city_inp = city_inp.strip()
+
+				# Check if the user entered a blank input, to break the loop
+				if not city_inp:
+					break
+
+				# Parse the input for the city to extract the coordinates and name
+				city = Util.parse_city_square_brackets(city_inp)
+				if "error" in city:
+					Util.error(city['error'])
+					continue
+
+				# Insert the city
+				city_id = City.add_city(db=self.db, x=city['x'], y=city['y'], city_name=city['city_name'], user_id=self.user_id)
+				if city_id > 0:
+					Util.success("City has been added.")
+				else:
+					Util.error("There was an error adding the city")
+					continue
+
 
 	def do_set(self, inp: str) -> None:
 		# Determine what needs to be set:
@@ -92,5 +116,5 @@ class Shell:
 
 		if cmd == "resource":
 			pass
-		if cmd == "city":
+		elif cmd == "city":
 			pass

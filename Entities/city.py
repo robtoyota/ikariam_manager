@@ -7,8 +7,15 @@ class City:
 		# Insert the new user
 		with db.cursor() as cur:
 			cur.execute(
-				"insert into city (x, y, city_name, user_id) values (%s, %s, %s, %s) on conflict do nothing returning id",
-				(x, y, city_name, user_id)
+				"""
+					insert into city (x, y, city_name, user_id, list_order) 
+					values (
+						%(x)s, %(y)s, %(city_name)s, %(user_id)s,
+						(select coalesce(max(list_order), 0) + 1 from city where user_id=%(user_id)s)
+					) 
+					on conflict do nothing returning id
+				""",
+				{'x':x, 'y':y, 'city_name':city_name, 'user_id':user_id}
 			)
 
 			# Get the ID of the user
@@ -35,8 +42,8 @@ class City:
 					x int not null,
 					y int not null,
 					city_name text null,
-					city_level int null,
 					list_order int null,
+					city_level int null,
 					population int null,
 					max_population int null,
 					satisfaction int null,
