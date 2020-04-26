@@ -2,16 +2,16 @@ from pg import Pg
 
 
 class Resource:
-	def __init__(self):
-		self.city_id = 0
-		self.resource_type = ""
-		self.amount = 0
-		self.production = 0
-		self.usage = 0
-		self.maximum = 0
-		self.target_minimum = 0 
-		self.target_maximum = 0
-		self.target_amount = 0
+	def __init__(self, properties: dict):
+		self.city_id = properties.get('city_id', 0)
+		self.resource_type = properties.get('resource_type', "')
+		self.amount = properties.get('amount', 0)
+		self.production = properties.get('production', 0)
+		self.usage = properties.get('usage', 0)
+		self.maximum = properties.get('maximum', 0)
+		self.target_minimum = 0properties.get('target_minimum',  )
+		self.target_maximum = properties.get('target_maximum', 0)
+		self.target_amount = properties.get('target_amount', 0)
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:

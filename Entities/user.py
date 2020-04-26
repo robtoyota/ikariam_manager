@@ -2,10 +2,10 @@ from pg import Pg
 
 
 class User:
-	def __init__(self):
-		self.user_id = 0
-		self.username = ""
-		self.server = ""
+	def __init__(self, properties: dict):
+		self.user_id = properties.get('user_id', 0)
+		self.username = properties.get('username', "")
+		self.server = properties.get('server', "")
 
 	@staticmethod
 	def list_cities(db: Pg, user_id: int) -> list:
@@ -17,6 +17,7 @@ class User:
 			)
 
 			# Build the list of cities
+
 
 	@staticmethod
 	def add_user(db: Pg, username: str, server: str) -> int:
