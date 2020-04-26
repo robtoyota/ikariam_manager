@@ -1,6 +1,7 @@
 from prompt_toolkit import print_formatted_text as print
 from prompt_toolkit import PromptSession
 
+from Shell.util import Util
 from pg import Pg
 from Shell.cmd import Cmd
 from Entities.user import User
@@ -61,18 +62,6 @@ class Shell:
 		arg_split = args.strip().split()
 		return arg_split
 
-	def error(self, msg: str) -> None:
-		print(f"==Error: {msg}")
-
-	def warning(self, msg: str) -> None:
-		print(f"==Warning: {msg}")
-
-	def success(self, msg: str) -> None:
-		print(f"{msg}")
-
-	def message(self, msg: str) -> None:
-		print(f"{msg}")
-
 	def do_install_database(self) -> None:
 		# Install the database tables/functions/etc
 		Cmd.install_database(self.db)
@@ -90,9 +79,9 @@ class Shell:
 				response = User.add_user(db=self.db, server=args[1], username=args[0])
 				if response > 0:
 					self.user_id = response
-					self.success(f"Current user has been set to {args[0]}: {args[1]}")
+					Util.success(f"Current user has been set to {args[0]}: {args[1]}")
 			else:
-				self.error("Server and Username are required")
+				Util.error("Server and Username are required")
 		# Add cities
 		if cmd == "city":
 			pass
