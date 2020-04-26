@@ -37,7 +37,7 @@ class City:
 				row = cur.fetchone()
 
 				# Insert each of the resource types
-				for r in ['B', 'M', 'W', 'C', 'S']:
+				for r in ['B', 'W', 'M', 'C', 'S']:
 					cur.execute(
 						"insert into resource (city_id, resource_type) values (%s, %s) on conflict do nothing", 
 						(row['id'], r)
@@ -66,7 +66,7 @@ class City:
 					y int not null,
 					city_name text null,
 					list_order int null,
-					resource_type varchar(1),  -- M/W/C/S
+					resource_type varchar(1),  -- W/M/C/S
 					city_level int null,
 					population int null,
 					max_population int null,
