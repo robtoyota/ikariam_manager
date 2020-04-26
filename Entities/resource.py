@@ -9,14 +9,14 @@ class Resource:
 		self.production = properties.get('production', 0)
 		self.usage = properties.get('usage', 0)
 		self.maximum = properties.get('maximum', 0)
-		self.target_minimum = 0properties.get('target_minimum',  )
+		self.target_minimum = properties.get('target_minimum', 0)
 		self.target_maximum = properties.get('target_maximum', 0)
 		self.target_amount = properties.get('target_amount', 0)
 
 	@staticmethod
 	def set_amount(db: Pg, resource_id: int, amount: int) -> bool:
 		with db.cursor() as cur:
-			# 
+			pass
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:
@@ -118,7 +118,6 @@ class Resource:
 			# Base resource table
 			cur.execute("""
 				create index if not exists resouce_city_id on resource(city_id);
-				create index if not exists resouce_user_id on resource(user_id);
 
 				create index if not exists resource_amount_resource_id on resource_amount(resource_id);
 				create index if not exists resource_production_resource_id on resource_production(resource_id);

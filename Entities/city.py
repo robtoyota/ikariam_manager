@@ -32,18 +32,27 @@ class City:
 				{'x':x, 'y':y, 'city_name':city_name, 'user_id':user_id}
 			)
 
-			# Get the ID of the user
+			# If city was created:
 			if cur.rowcount > 0:
 				row = cur.fetchone()
+
+				# Insert each of the resource types
+				for r in ['L', 'M', 'W', 'C', 'S']:
+					cur.execute(
+						"insert into resource (city_id, resource_type) values (%s, %s) on conflict do nothing", 
+						(row['id'], r)
+					)
+				# Return the ID of the new city row
 				return row['id']
-			else:  # If no ID was returned
-				# Does the user already exist? Try get the ID:
+			# If no ID was returned
+			else:
+				# Does the city already exist? Try get the ID:
 				cur.execute("select id from username where x=%s and y=%s and city_name=%s and user_id=%s", (x, y, city_name, user_id))
 				row = cur.fetchone()
-				if row['id'] > 0:
+				if row['id'] > 0:  # Return the ID of the existing row
 					return row['id']
 				else:
-					return -1
+					return -1  # Error
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:
