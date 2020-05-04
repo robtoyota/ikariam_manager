@@ -12,11 +12,15 @@ class Resource:
 		self.target_minimum = properties.get('target_minimum', 0)
 		self.target_maximum = properties.get('target_maximum', 0)
 		self.target_amount = properties.get('target_amount', 0)
-
+	
 	@staticmethod
-	def set_amount(db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
+	def update_value(column: str, db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
 		# Validate the input
 		if not (city_id > 0 and resource_type in ['B', 'W', 'M', 'C', 'S'] and amount > 0):
+			return False
+		
+		# Whitelist the column to be updated
+		if column not in ['amount', 'maximum', 'production', 'target_amount', 'target_maximum', 'target_minimum', 'usage']:
 			return False
 
 		# Upsert the change
@@ -30,7 +34,7 @@ class Resource:
 						where city_id=%(city_id)s and resource_type=%(resource_type)s
 					)
 					-- Insert the value row if it does not already exist
-					insert into resource_amount
+					insert into resource_""" + column + """
 						(resource_id, amount)
 					select id, %(amount)s from r
 					-- If it exists already, then update the value
@@ -44,6 +48,10 @@ class Resource:
 					'amount': amount,
 				}
 			)
+	
+	@staticmethod
+	def set_amount(db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
+		Resource.update_value('amount', db, city_id, resource_type, amount)
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:
