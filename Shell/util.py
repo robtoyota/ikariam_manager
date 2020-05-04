@@ -36,6 +36,24 @@ class Util:
 			return {'error': "City format was incorrect"}
 
 		return {'x': x, 'y': y, 'city_name': city_name}
+	
+	@staticmethod
+	def resource_name(resource_type: str) -> str:
+		# Convert a resource type short form into the full name
+		# Example: input = 'M', output = 'Marble'
+		names = {
+			'B' = 'Building Material',
+			'W' = 'Wine',
+			'M' = 'Marble',
+			'C' = 'Crystal',
+			'S' = 'Sulfur',
+		}
+		
+		# Return the name of the resource
+		try:
+			return names[resource_type]
+		except KeyError:
+			return ''
 
 	@staticmethod
 	def parse_resource_amount(amount: str) -> int:
