@@ -16,7 +16,13 @@ class Resource:
 	@staticmethod
 	def set_value(column: str, db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
 		# Validate the input
-		if not (city_id > 0 and resource_type in ['B', 'W', 'M', 'C', 'S'] and amount > 0):
+		if not (
+			isinstance(city_id, int)
+			and city_id > 0
+			and resource_type in ['B', 'W', 'M', 'C', 'S']
+			and isinstance(amount, int)
+			and amount > 0
+		):
 			return False
 		
 		# Whitelist the column to be updated
