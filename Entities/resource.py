@@ -14,7 +14,7 @@ class Resource:
 		self.target_amount = properties.get('target_amount', 0)
 	
 	@staticmethod
-	def update_value(column: str, db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
+	def set_value(column: str, db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
 		# Validate the input
 		if not (city_id > 0 and resource_type in ['B', 'W', 'M', 'C', 'S'] and amount > 0):
 			return False
@@ -48,10 +48,6 @@ class Resource:
 					'amount': amount,
 				}
 			)
-	
-	@staticmethod
-	def set_amount(db: Pg, city_id: int, resource_type: str, amount: int) -> bool:
-		Resource.update_value('amount', db, city_id, resource_type, amount)
 
 	@staticmethod
 	def install_tables(db: Pg) -> None:
