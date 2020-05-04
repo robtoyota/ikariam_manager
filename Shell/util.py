@@ -42,11 +42,11 @@ class Util:
 		# Convert a resource type short form into the full name
 		# Example: input = 'M', output = 'Marble'
 		names = {
-			'B' = 'Building Material',
-			'W' = 'Wine',
-			'M' = 'Marble',
-			'C' = 'Crystal',
-			'S' = 'Sulfur',
+			'B': 'Building Material',
+			'W': 'Wine',
+			'M': 'Marble',
+			'C': 'Crystal',
+			'S': 'Sulfur',
 		}
 		
 		# Return the name of the resource
@@ -62,7 +62,7 @@ class Util:
 		
 		amount = amount.strip().replace(',', '')
 		if not amount:  # Skip blank amounts
-			continue
+			return None
 
 		# Handle cases of more than 1 million resources
 		multiplier = 1  # Default to not multiply
@@ -76,6 +76,8 @@ class Util:
 			amount *= multiplier  # Handle "K" suffix for 1+ million
 		except (ValueError, TypeError):
 			amount = None
+		
+		return amount
 	
 	@staticmethod
 	def parse_resource_amount_listing(resources: str) -> dict:
