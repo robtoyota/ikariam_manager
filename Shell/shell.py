@@ -72,7 +72,8 @@ class Shell:
 
 		# Add users
 		if cmd == "user":
-			# add user [server] [username]
+			# `add user [server] [username]`
+			
 			# Get the username and server from the input
 			args = self.split_args(inp_args)
 			if len(args) == 2:  # Make sure both values are set:
@@ -85,6 +86,8 @@ class Shell:
 
 		# Add cities
 		elif cmd == "city":
+			# `add city [city name]`
+			
 			Util.message(HTML("Paste the name in the format <b>[xx:yy] CityName</b>. Enter a blank line to stop entering cities."))
 			# Request each city, one by one
 			while True:
@@ -116,6 +119,8 @@ class Shell:
 
 		# Set the resource amounts
 		if cmd == "resource":
+			# `set resource`
+			
 			Util.message("Paste your resources for each city, or press [Enter] to skip")
 			# Loop through each city and get its values
 			for city in User.city_list(self.db, self.user_id):
@@ -125,16 +130,44 @@ class Shell:
 				# Parse the input into each resource
 				amounts = Util.parse_resource_amount_listing(resources)
 
-				# Make sure all resources are accounted for
-				if len(amounts) != 5:
-					Util.error("Missing resource values. Skipping to the next city.")
-					continue
-
 				# Loop through each resource type, and set each value
+				values_found = 0
 				for r in ['B', 'W', 'M', 'C', 'S']:
-					Resource.set_amount(self.db, city['id'], r, amounts[r])
+					if amounts[r]:
+						values_found += 1
+						Resource.set_value('amount', self.db, city['id'], r, amounts[r])
+				
+				# Notify if some values were skipped
+				if values_found < 5:
+					Util.warning(f"Only updated {values_found} of the resource values. Some resource values were missing.")
 
 			Util.success("All resources have been updated.")
-
-		elif cmd == "city":
+		
+		elif cmd == "city_type":
 			pass
+		
+		# Set the resource production amounts
+		elif cmd == "production":
+			# `set production`
+			
+			Util.message("Enter the resource production values for each city, or press [Enter] to skip")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the building_material production as input
+				if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - {Util.resource_name('B')}> ")):
+					Resource.set_value('production', self.db, city['id'], 'B', resource_value)
+				else:  # Notify if no valid value was entered
+					Util.message("Skipping")
+				
+				# 
+				if city['resource_type']:
+					if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - {Util.resource_name(city['resource_type'])}> ")):
+						Resource.set_value('production', self.db, city['id'], city['resource_type'], resource_value)
+					else:  # Notify if no valid value was entered
+						Util.message("Skipping")
+				else:
+					Util.warning(
+						HTML(f"{city['city_name']} does not have its luxury resource type set. Use the command: <b>set city_type</b>")
+					)
+
+			Util.success("All resources have been updated.")
