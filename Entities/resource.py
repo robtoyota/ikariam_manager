@@ -23,10 +23,12 @@ class Resource:
 			and isinstance(amount, int)
 			and amount > 0
 		):
+			print("Error: Invalid values")
 			return False
 		
 		# Whitelist the column to be updated
 		if column not in ['amount', 'maximum', 'production', 'target_amount', 'target_maximum', 'target_minimum', 'usage']:
+			print(f"Error: Invalid column: {column}")
 			return False
 
 		# Upsert the change
