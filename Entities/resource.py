@@ -170,6 +170,7 @@ class Resource:
 	@staticmethod
 	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
+			# resource_detail
 			cur.execute("""
 				create or replace view resource_detail as
 				select
