@@ -191,6 +191,21 @@ class Shell:
 					)
 
 			Util.success("All resources have been updated.")
+
+		# Set the resource usage amounts
+		elif cmd == "usage":
+			# `set usage`
+			
+			Util.message("Enter the wine usage for each city, or press [Enter] to skip a city")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the building_material production as input
+				if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - {Util.resource_name('W')}> ")):
+					Resource.set_value('usage', self.db, city['id'], 'W', resource_value)
+				else:  # Notify if no valid value was entered
+					Util.message("Skipping")
+
+			Util.success("All resources have been updated.")
 	
 	def do_view(self, inp: str) -> None:
 		# Determine what needs to be viewed:
