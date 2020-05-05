@@ -44,6 +44,10 @@ class Shell:
 			self.do_add(args)
 		elif cmd == "set":
 			self.do_set(args)
+		elif cmd == "view":
+			self.do_view(args)
+		else:
+			Util.warning(HTML(f"Command `<b>{cmd}</b>` not found"))
 
 		if not cmd_response:
 			return False  # Don't stop running the program
@@ -144,7 +148,23 @@ class Shell:
 			Util.success("All resources have been updated.")
 		
 		elif cmd == "city_type":
-			pass
+			# `set city_type`
+			
+			Util.message("Enter the first letter of the luxury resource of each city: W/M/C/S")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the resource name
+				resrouce_type = self.ps.prompt(f"{city['city_name']} (W/M/C/S)> ")
+
+				# Parse it for the letter
+				resrouce_type = resrouce_type.strip().upper()[:1]
+
+				if resrouce_type in ['W', 'M', 'C', 'S']:
+					City.set_resource_type(self.db, city['id'], resrouce_type)
+				else:
+					Util.warning(f"Invalid resource. Skipping to the next city.")
+
+			Util.success("All cities have been updated.")
 		
 		# Set the resource production amounts
 		elif cmd == "production":
@@ -171,3 +191,53 @@ class Shell:
 					)
 
 			Util.success("All resources have been updated.")
+
+		# Set the resource usage amounts
+		elif cmd == "usage":
+			# `set usage`
+			
+			Util.message("Enter the wine usage for each city, or press [Enter] to skip a city")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the building_material production as input
+				if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - {Util.resource_name('W')}> ")):
+					Resource.set_value('usage', self.db, city['id'], 'W', resource_value)
+				else:  # Notify if no valid value was entered
+					Util.message("Skipping")
+
+			Util.success("All resources have been updated.")
+
+		# Set the resource maximums
+		elif cmd == "maximum":
+			# `set maximum`
+			
+			Util.message("Enter the maximum storage amount for each city, or press [Enter] to skip a city")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - Capacity> ")):
+					# Loop through each resource type, and set each value
+					for resource_type in ['B', 'W', 'M', 'C', 'S']:
+						Resource.set_value('maximum', self.db, city['id'], resource_type, resource_value)
+				else:  # Notify if no valid value was entered
+					Util.message("Skipping")
+
+			Util.success("All resources have been updated.")
+	
+	def do_view(self, inp: str) -> None:
+		# Determine what needs to be viewed:
+		cmd, args = self.split_cmd_arg(inp)
+		
+		if cmd == "resources":
+			pass
+
+	def do_target(self, inp: str) -> None:
+		# Determine what needs to be set:
+		cmd, args = self.split_cmd_arg(inp)
+
+		# Set the resource target amount
+		if cmd == "resource_amount":
+			pass
+		elif cmd == "resource_maximum":
+			pass
+		elif cmd == "resource_minimum":
+			pass

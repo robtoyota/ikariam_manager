@@ -55,6 +55,18 @@ class City:
 					return -1  # Error
 
 	@staticmethod
+	def set_resource_type(db: Pg, city_id: int, resource_type: str) -> None:
+		# Update the city_type
+		with db.cursor() as cur:
+			cur.execute("update city set resource_type=%s where id=%s", (resource_type, city_id))
+
+	@staticmethod
+	def move_city(db: Pg, city_id: int, x: int, y: int) -> None:
+		# Update the coordinates
+		with db.cursor() as cur:
+			cur.execute("update city set x=%s, y=%s where id=%s", (x, y, city_id))
+
+	@staticmethod
 	def install_tables(db: Pg) -> None:
 		with db.cursor() as cur:
 			cur.execute("""
@@ -92,28 +104,28 @@ class City:
 	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
 			cur.execute("""
-				create view city_detail as
+				create or replace view city_detail as
 				with r as (
+					select
+						server, username, user_id, city_id,
+						max(case when(resource_type='B') then predicted_amount else 0 end) as building_material, 
+						max(case when(resource_type='W') then predicted_amount else 0 end) as wine, 
+						max(case when(resource_type='M') then predicted_amount else 0 end) as marble, 
+						max(case when(resource_type='C') then predicted_amount else 0 end) as crystal, 
+						max(case when(resource_type='S') then predicted_amount else 0 end) as sulfur 
+					from resource_detail
+					group by
+						server, username, user_id, city_id 
+				)
 				select
-					server, username, user_id, city_id,
-					max(case when(resource_type='B') then amount else 0 end) as building_material, 
-					max(case when(resource_type='W') then amount else 0 end) as wine, 
-					max(case when(resource_type='M') then amount else 0 end) as marble, 
-					max(case when(resource_type='C') then amount else 0 end) as crystal, 
-					max(case when(resource_type='S') then amount else 0 end) as sulfur 
-				from resource_detail
-				group by
-					server, username, user_id, city_id 
-			)
-			select
-				c.id as city_id, c.user_id, c.x, c.y, c.city_name, r.server, r.username, c.resource_type,
-				r.building_material, r.wine, r.marble, r.crystal, r.sulfur,
-				c.city_level, c.population, c.max_population, c.satisfaction, c.action_points_available, c.list_order
-			from
-				city c
-				join r
-					on (c.id=r.city_id)
-			order by c.user_id, c.list_order
+					c.id as city_id, c.user_id, c.x, c.y, c.city_name, r.server, r.username, c.resource_type,
+					r.building_material, r.wine, r.marble, r.crystal, r.sulfur,
+					c.city_level, c.population, c.max_population, c.satisfaction, c.action_points_available, c.list_order
+				from
+					city c
+					join r
+						on (c.id=r.city_id)
+				order by c.user_id, c.list_order
 			""")
 
 	@staticmethod

@@ -170,17 +170,25 @@ class Resource:
 	@staticmethod
 	def install_views(db: Pg) -> None:
 		with db.cursor() as cur:
+			# resource_detail
 			cur.execute("""
 				create or replace view resource_detail as
 				select
 					r.id as resource_id, c.user_id, usr.server, usr.username, r.city_id, c.city_name, r.resource_type
-					, amt.amount
-					, mx.amount as maximum
-					, prd.amount as production
-					, tamt.amount as target_amount
-					, tmx.amount as target_maximum
-					, tmn.amount as target_minimum
-					, usg.amount as usage
+					, coalesce(amt.amount, 0) as amount
+					, coalesce(mx.amount, 0) as maximum
+					, coalesce(prd.amount, 0) as production
+					, coalesce(tamt.amount, 0) as target_amount
+					, coalesce(tmx.amount, 0) as target_maximum
+					, coalesce(tmn.amount, 0) as target_minimum
+					, coalesce(usg.amount, 0) as usage
+					, (
+						coalesce(amt.amount, 0)  
+						+ (
+							(coalesce(prd.amount, 0)-coalesce(usg.amount, 0))
+							* floor(extract(epoch from now()-amt.updated_on) / (60*60))
+						)
+					)::int  as predicted_amount
 				from
 					resource r
 					join city c
