@@ -45,25 +45,25 @@ class Cmd:
 	# Install the DB DDLs for tables/functions/etc
 	def install_database(db: Pg) -> bool:
 		print("Installing tables...")
-		User.install_tables(db)
-		City.install_tables(db)
 		Resource.install_tables(db)
+		City.install_tables(db)
+		User.install_tables(db)
 
 		print("Installing base functions...")
 
 		print("Installing indexes...")
-		User.install_indexes(db)
-		City.install_indexes(db)
 		Resource.install_indexes(db)
+		City.install_indexes(db)
+		User.install_indexes(db)
 
 		print("Installing views...")
-		User.install_views(db)
-		City.install_views(db)
 		Resource.install_views(db)
+		City.install_views(db)
+		User.install_views(db)
 
 		print("Installing functions...")
-		User.install_pg_functions(db)
-		City.install_pg_functions(db)
 		Resource.install_pg_functions(db)
+		City.install_pg_functions(db)
+		User.install_pg_functions(db)
 
 		print("Installing views...")
