@@ -171,3 +171,10 @@ class Shell:
 					)
 
 			Util.success("All resources have been updated.")
+	
+	def do_view(self, inp: str) -> None:
+		# Determine what needs to be viewed:
+		cmd, args = self.split_cmd_arg(inp)
+		
+		if cmd == "resources":
+			pass
