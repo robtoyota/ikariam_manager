@@ -206,10 +206,38 @@ class Shell:
 					Util.message("Skipping")
 
 			Util.success("All resources have been updated.")
+
+		# Set the resource maximums
+		elif cmd == "maximum":
+			# `set maximum`
+			
+			Util.message("Enter the maximum storage amount for each city, or press [Enter] to skip a city")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				if resource_value := Util.parse_resource_amount(self.ps.prompt(f"{city['city_name']} - Capacity> ")):
+					# Loop through each resource type, and set each value
+					for resource_type in ['B', 'W', 'M', 'C', 'S']:
+						Resource.set_value('maximum', self.db, city['id'], resource_type, resource_value)
+				else:  # Notify if no valid value was entered
+					Util.message("Skipping")
+
+			Util.success("All resources have been updated.")
 	
 	def do_view(self, inp: str) -> None:
 		# Determine what needs to be viewed:
 		cmd, args = self.split_cmd_arg(inp)
 		
 		if cmd == "resources":
+			pass
+
+	def do_target(self, inp: str) -> None:
+		# Determine what needs to be set:
+		cmd, args = self.split_cmd_arg(inp)
+
+		# Set the resource target amount
+		if cmd == "resource_amount":
+			pass
+		elif cmd == "resource_maximum":
+			pass
+		elif cmd == "resource_minimum":
 			pass
