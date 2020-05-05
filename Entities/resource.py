@@ -48,7 +48,9 @@ class Resource:
 					-- If it exists already, then update the value
 					on conflict (resource_id)
 					do update 
-					set amount = excluded.amount
+					set 
+						amount = excluded.amount,
+						updated_on = now()
 				""",
 				{
 					'city_id': city_id,
