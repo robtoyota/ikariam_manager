@@ -55,6 +55,18 @@ class City:
 					return -1  # Error
 
 	@staticmethod
+	def set_resource_type(db: Pg, city_id: int, resource_type: str) -> None:
+		# Update the city_type
+		with db.cursor() as cur:
+			cur.execute("update city set resource_type=%s where id=%s", (resource_type, city_id))
+
+	@staticmethod
+	def move_city(db: Pg, city_id: int, x: int, y: int) -> None:
+		# Update the coordinates
+		with db.cursor() as cur:
+			cur.execute("update city set x=%s, y=%s where id=%s", (x, y, city_id))
+
+	@staticmethod
 	def install_tables(db: Pg) -> None:
 		with db.cursor() as cur:
 			cur.execute("""
