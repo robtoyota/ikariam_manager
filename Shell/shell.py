@@ -44,6 +44,10 @@ class Shell:
 			self.do_add(args)
 		elif cmd == "set":
 			self.do_set(args)
+		elif cmd == "view":
+			self.do_view(args)
+		else:
+			Util.warning(HTML(f"Command `<b>{cmd}</b>` not found"))
 
 		if not cmd_response:
 			return False  # Don't stop running the program
@@ -144,7 +148,23 @@ class Shell:
 			Util.success("All resources have been updated.")
 		
 		elif cmd == "city_type":
-			pass
+			# `set city_type`
+			
+			Util.message("Enter the first letter of the luxury resource of each city: W/M/C/S")
+			# Loop through each city and get its values
+			for city in User.city_list(self.db, self.user_id):
+				# Get the resource name
+				resrouce_type = self.ps.prompt(f"{city['city_name']} (W/M/C/S)> ")
+
+				# Parse it for the letter
+				resrouce_type = resrouce_type.strip().upper()[:1]
+
+				if resrouce_type in ['W', 'M', 'C', 'S']:
+					City.set_resource_type(self.db, city['id'], resrouce_type)
+				else:
+					Util.warning(f"Invalid resource. Skipping to the next city.")
+
+			Util.success("All cities have been updated.")
 		
 		# Set the resource production amounts
 		elif cmd == "production":
